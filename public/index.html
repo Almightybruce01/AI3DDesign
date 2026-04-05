@@ -67,8 +67,13 @@
           <h2 class="complex-studio-title">Complex Design Studio</h2>
           <p class="field-hint">
             Describe a <strong>multi-part</strong> pendant (motif, stone layout, hollow cage, digit link). Optional
-            <strong>reference photo</strong> helps GPT-4o size the plate and stone notes. Analysis returns a JSON
-            manufacturing plan; build outputs <strong>main plate</strong> + separate <strong>digit link</strong> (OBJ/STL).
+            <strong>reference photo</strong> needs <code>OPENAI_API_KEY</code> (GPT-4o vision). <strong>Text-only</strong> briefs
+            work with <code>GROQ_API_KEY</code> or <code>OPENAI_API_KEY</code>. Analysis returns JSON; build outputs
+            <strong>main plate</strong> + <strong>digit link</strong> (OBJ/STL).
+          </p>
+          <p class="field-hint">
+            Want a <strong>Miami Cuban chain</strong> from a photo + prompt instead? Use
+            <a href="#chain-photo-panel">Photo → AI → print</a> → <strong>Build full chain</strong> (link + clasp mesh).
           </p>
           <div class="field">
             <label>Brief (natural language)</label>
@@ -295,13 +300,12 @@
           <a href="/api/cuban/reference?extended=1" target="_blank" rel="noopener">extended</a>
         </p>
 
-        <div class="chain-photo-panel">
-          <h3 class="chain-photo-title">Photo → AI → print</h3>
+        <div class="chain-photo-panel" id="chain-photo-panel">
+          <h3 class="chain-photo-title">Photo → AI → print (Miami Cuban)</h3>
           <p class="field-hint">
-            Upload a <strong>chain photo</strong> (files or camera). Say what you want different. Vision uses
-            <strong>vision LLM</strong> (same OpenAI-compatible config as copilot). Optional photo edits use Replicate
-            instruct-pix2pix (<code>REPLICATE_API_TOKEN</code>). Mesh is <strong>mm-scale STL</strong> for
-            slicing — verify dimensions against calipers.
+            <strong>This is the chain builder:</strong> photo + your notes → one mesh with <strong>link + box clasp</strong>
+            (OBJ/STL/CAD). Requires <code>OPENAI_API_KEY</code> (GPT-4o reads the photo; Groq is text-only). Optional Replicate
+            edits: <code>REPLICATE_API_TOKEN</code>. Verify mm scale in your slicer.
           </p>
           <div id="chain-photo-drop" class="chain-photo-drop" tabindex="0">
             <p class="chain-photo-drop-txt">
@@ -324,8 +328,10 @@
             <textarea id="chain-photo-notes" placeholder="e.g. Same look but 14mm face, 22 inch, more iced on the flat faces…" rows="3"></textarea>
           </div>
           <div class="chain-photo-actions">
-            <button type="button" class="btn" id="chain-photo-analyze">Analyze photo (AI)</button>
-            <button type="button" class="btn btn-primary" id="chain-photo-print">One-click: analyze + STL</button>
+            <button type="button" class="btn btn-primary" id="chain-photo-print" style="font-weight: 600">
+              Build full chain — photo + notes → link &amp; clasp mesh
+            </button>
+            <button type="button" class="btn" id="chain-photo-analyze">Analyze only (preview JSON)</button>
             <button type="button" class="btn" id="chain-photo-refine">Photo → photo (Replicate)</button>
             <button type="button" class="btn" id="chain-photo-semantic">Render target look (DALL·E / Flux)</button>
             <button type="button" class="btn btn-ghost" id="chain-photo-apply-preset">Apply matched preset</button>

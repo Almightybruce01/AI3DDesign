@@ -41,9 +41,23 @@ function wireFileInput(el) {
 
 async function postForm(url, fd) {
   const res = await fetch(url, { method: 'POST', body: fd });
-  const j = await res.json();
+  const j = await res.json().catch(() => ({}));
   if (!res.ok || !j.success) throw new Error(j.error || res.statusText);
   return j;
+}
+
+/** Need any configured LLM; photo uses GPT-4o when OPENAI_API_KEY is set, else text-only Groq→OpenAI fallback. */
+async function requireChainLlm() {
+  const res = await fetch('/api/ai/config');
+  const j = await res.json().catch(() => ({}));
+  if (!j.success || !j.providers?.openai) {
+    throw new Error(
+      'Set GROQ_API_KEY or OPENAI_API_KEY in .env and restart the server.',
+    );
+  }
+  if (!j.providers?.groqKey && !j.providers?.complexBriefPhoto) {
+    throw new Error('Set at least GROQ_API_KEY or OPENAI_API_KEY for chain analysis.');
+  }
 }
 
 function updateDownloadsFromBuild(j) {
@@ -100,8 +114,14 @@ function initChainPhoto() {
 
   $('#chain-photo-analyze')?.addEventListener('click', async () => {
     if (!lastFile) return toast('Choose or drop a photo first.');
-    toast('Analyzing with GPT-4o vision…');
     $('#chain-photo-status').textContent = '';
+    try {
+      await requireChainLlm();
+    } catch (e) {
+      toast(String(e.message || e));
+      return;
+    }
+    toast('Analyzing with GPT-4o vision…');
     try {
       const fd = new FormData();
       fd.append('chainPhoto', lastFile, lastFile.name || 'chain.jpg');
@@ -126,11 +146,17 @@ function initChainPhoto() {
     if (!lastFile) return toast('Choose or drop a photo first.');
     $('#chain-photo-status').textContent = '';
     try {
+      await requireChainLlm();
+    } catch (e) {
+      toast(String(e.message || e));
+      return;
+    }
+    try {
       const fd = new FormData();
       fd.append('chainPhoto', lastFile, lastFile.name || 'chain.jpg');
       fd.append('userNotes', $('#chain-photo-notes')?.value || '');
       const est = await fetchEstimate('photo_to_print', {});
-      const j = await runWithBuildOverlay('Photo → AI vision → print mesh', est, async () =>
+      const j = await runWithBuildOverlay('Photo + notes → full chain mesh (link + clasp)', est, async () =>
         postForm('/api/cuban/photo-to-print', fd),
       );
       lastAnalysis = j.analysis;

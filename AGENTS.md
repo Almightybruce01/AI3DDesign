@@ -46,7 +46,7 @@ Full `referenceIced` BRUCE builds can take **many minutes** (batched boolean uni
 ## Deployment
 
 - **`server.js`** sets `ROOT = __dirname` and serves `public/`, `generated/`, `uploads/`, and `/nm` (Three) from that directory — **not** from `process.cwd()`. Ship the full repo tree next to `server.js` (`scripts/`, `lib/`, `fonts/`, `public/`, `node_modules/`). See **`DEPLOY.md`**, **`Dockerfile`**, and **`Procfile`**.
-- **LLM routing** — Chat/completions use **`lib/openai-compatible.js`**: **`GROQ_API_KEY`** (free tier, fast, defaults API base to Groq) and/or **`OPENAI_API_KEY`** (vision, DALL·E, OpenAI models). Optional `OPENAI_BASE_URL`, or keyless **`OPENAI_ALLOW_NO_KEY=1`** for local Ollama. Not dependent on Cursor.
+- **LLM routing** — **`lib/openai-compatible.js`**: with **both** **`GROQ_API_KEY`** and **`OPENAI_API_KEY`**, text routes default to **Groq first** (`LLM_PRIMARY=groq|openai`), then **OpenAI on failure** (rate limits, empty output). Vision / DALL·E still use **`OPENAI_API_KEY`**. Optional **`OPENAI_BASE_URL`**, keyless **`OPENAI_ALLOW_NO_KEY=1`**. Chain photo can fall back to text-only if vision fails (`LLM_VISION_FALLBACK_NOTES`).
 
 ### AI model defaults (elite stack)
 
@@ -59,3 +59,4 @@ Full `referenceIced` BRUCE builds can take **many minutes** (batched boolean uni
 - **`npm run verify:ai`** (repo root) — checks `.env`, SFT JSONL, and resolved vision/text models.
 - **`npm run finetune:sync`** (in **`matrix-ai-hub`**) — sync latest succeeded **`ft:`** id into root **`.env`**.
 - **Matrix AI Hub UI** — `matrix-ai-hub/components/ChatPanel.tsx`: ChatGPT-style streaming, **Stop**, **New chat**, **Copy**, **markdown** (`react-markdown` + GFM); model badge from **`GET /api/health`**. Chat API uses **`ELITE_SYSTEM_PROMPT`** + optional **`LLM_SYSTEM_APPEND`**.
+- **Vercel env** — From **`matrix-ai-hub`**: **`npm run sync-env`** reads the repo-root **`.env`** and sets production variables (see **`matrix-ai-hub/scripts/sync-env-to-vercel.mjs`**). **`--dry-run`** lists what would sync; **`--force-localhost`** pushes workshop URLs even when they point at localhost. Redeploy after syncing.

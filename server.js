@@ -1,11 +1,12 @@
-require('dotenv').config();
+const path = require('path');
+/** Always load repo-root `.env` even if `node server.js` was started from another cwd. */
+require('dotenv').config({ path: path.join(__dirname, '.env') });
 
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
 const cors = require('cors');
 const multer = require('multer');
-const path = require('path');
 const fs = require('fs').promises;
 const fsSync = require('fs');
 const { execFileSync, spawn } = require('child_process');
@@ -39,7 +40,14 @@ const { stlStatsFromFile } = require('./lib/stl-stats');
 const { analyzeComplexBrief } = require('./lib/complex-build-ai');
 const { planToComplexBuildConfig } = require('./lib/complex-plan-map');
 const { runWorkshopCopilot } = require('./lib/workshop-copilot-ai');
-const { llmConfigured, openaiApiBase, visionModel, complexTextModel } = require('./lib/openai-compatible');
+const {
+  llmConfigured,
+  openaiApiBase,
+  visionModel,
+  complexTextModel,
+  hasGroqKey,
+  hasOpenAiKey,
+} = require('./lib/openai-compatible');
 
 const app = express();
 const server = http.createServer(app);
@@ -281,8 +289,8 @@ app.post('/api/cuban/analyze-photo', upload.single('chainPhoto'), async (req, re
     });
   } catch (e) {
     console.error(e);
-    const code = e.code === 'NO_OPENAI' ? 400 : 500;
-    res.status(code).json({ success: false, error: String(e.message || e) });
+    const noLlm = e.code === 'NO_OPENAI' || e.code === 'NO_OPENAI_VISION';
+    res.status(noLlm ? 503 : 500).json({ success: false, error: String(e.message || e), code: e.code });
   }
 });
 
@@ -336,8 +344,8 @@ app.post('/api/cuban/photo-to-print', upload.single('chainPhoto'), async (req, r
     });
   } catch (e) {
     console.error(e);
-    const code = e.code === 'NO_OPENAI' ? 400 : 500;
-    res.status(code).json({ success: false, error: String(e.message || e) });
+    const noLlm = e.code === 'NO_OPENAI' || e.code === 'NO_OPENAI_VISION';
+    res.status(noLlm ? 503 : 500).json({ success: false, error: String(e.message || e), code: e.code });
   }
 });
 
@@ -942,7 +950,8 @@ app.post('/api/complex/analyze', upload.single('image'), async (req, res) => {
     res.json({ success: true, plan, modelUsed });
   } catch (e) {
     console.error(e);
-    const code = e.code === 'NO_OPENAI' ? 503 : 500;
+    const noLlm = e.code === 'NO_OPENAI' || e.code === 'NO_OPENAI_VISION';
+    const code = noLlm ? 503 : 500;
     res.status(code).json({
       success: false,
       error: String(e.message || e),
@@ -1028,10 +1037,16 @@ app.get('/api/ai/config', async (req, res) => {
       success: true,
       providers: {
         openai: llmConfigured(process.env),
+        groqKey: hasGroqKey(process.env),
+        openaiKey: hasOpenAiKey(process.env),
+        /** groq | openai — which vendor is tried first for text (default groq when both keys). */
+        llmPrimary: (process.env.LLM_PRIMARY || (hasGroqKey(process.env) ? 'groq' : 'openai')).trim(),
         replicate: Boolean(process.env.REPLICATE_API_TOKEN),
         chainVision: llmConfigured(process.env),
         photoToPhoto: Boolean(process.env.REPLICATE_API_TOKEN),
         complexBrief: llmConfigured(process.env),
+        /** GPT-4o vision — optional if you only use Groq text-only paths. */
+        complexBriefPhoto: Boolean(process.env.OPENAI_API_KEY?.trim()),
         openaiBaseUrl: openaiApiBase(process.env),
       },
       blender: {
