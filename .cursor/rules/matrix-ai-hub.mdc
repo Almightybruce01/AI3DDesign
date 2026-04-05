@@ -1,0 +1,13 @@
+---
+description: Next.js Matrix AI Hub (Vercel) — chat proxy, workshop vector proxy, fine-tune script
+globs: matrix-ai-hub/**/*
+alwaysApply: false
+---
+
+# matrix-ai-hub
+
+- **Dev:** `cd matrix-ai-hub && npm run dev` → [http://localhost:3010](http://localhost:3010)
+- **`/api/chat`** strips client `system` and injects `lib/elite-system-prompt.ts` + `LLM_SYSTEM_APPEND`. **`GROQ_API_KEY`** (free) or **`OPENAI_API_KEY`** — see `lib/llm-resolve.ts`.
+- **`/api/workshop/vector-scan`** proxies to `WORKSHOP_API_BASE_URL` + `/api/jewelry/vector-scan`.
+- **Fine-tune:** `npm run finetune` uploads `training/matrix-workshop-sft.jsonl` (requires OpenAI key + billing).
+- Vercel **root directory** for this app only: `matrix-ai-hub` if the monorepo is imported.

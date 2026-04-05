@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Matrix Workshop · AI3DDesign</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/workshop.css" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#e8eaef" />
+</head>
+<body>
+  <div id="app">
+    <header class="topbar">
+      <div class="brand">
+        <h1>Matrix Workshop</h1>
+        <span>Jewelry CAD · AI3DDesign</span>
+      </div>
+      <div class="top-actions">
+        <span id="workshop-health-pill" class="health-pill health-pill--warn" role="button" tabindex="0" title="API status — click for details">…</span>
+        <button type="button" class="btn btn-ghost" id="btn-app-status" title="Version, last update, what is wrong">Status</button>
+        <a class="btn btn-ghost" href="/guide.html" target="_blank" rel="noopener">Guide</a>
+        <button type="button" class="btn btn-ghost" id="btn-help" title="Help (?)">Help</button>
+        <label class="btn btn-ghost" style="cursor:pointer;margin:0">
+          Import
+          <input type="file" id="file-import" accept=".obj,.stl" hidden />
+        </label>
+        <a class="btn btn-ghost" id="dl-obj" href="/generated/jewelry_last.obj" download>OBJ</a>
+        <a class="btn btn-ghost" id="dl-stl" href="/generated/jewelry_last.stl" download>STL</a>
+        <a class="btn btn-ghost" id="dl-cad" href="/generated/jewelry_last.cad" download>CAD</a>
+        <select id="blender-mesh-pick" class="blender-pick" title="Mesh to open in Blender" aria-label="Blender mesh">
+          <option value="generated/jewelry_last.obj">Blender: last jewelry OBJ</option>
+          <option value="generated/jewelry_last.stl">Blender: last jewelry STL</option>
+          <option value="generated/cuban_last.stl">Blender: last Cuban STL</option>
+          <option value="generated/complex_last_main.obj">Blender: complex main OBJ</option>
+        </select>
+        <button type="button" class="btn btn-ghost" id="top-blender-open" title="Launch Blender with import script">Blender</button>
+        <button type="button" class="btn btn-primary" id="jewelry-build">Build jewelry</button>
+      </div>
+    </header>
+
+    <aside class="rail">
+      <button type="button" class="tool" id="tool-orbit" data-tool="orbit" title="Orbit" data-active="true">◎</button>
+      <button type="button" class="tool" id="tool-pan" title="Pan note">✥</button>
+      <button type="button" class="tool" id="tool-measure" data-tool="measure" title="Measure two points">↔</button>
+      <button type="button" class="tool" id="tool-piece" data-tool="piece" title="Move / rotate / scale loaded mesh">✦</button>
+      <button type="button" class="tool" id="tool-cutter" data-tool="cutter" title="Subtractive preview">▢</button>
+      <button type="button" class="tool" id="tool-frame" title="Fit all">⬚</button>
+    </aside>
+
+    <div class="vp-wrap">
+      <canvas id="cvs" tabindex="0"></canvas>
+      <div class="vp-overlay">
+        <div class="chip" id="measure-readout"></div>
+        <div class="chip">Section plane (Y): <span id="clip-val">0</span></div>
+        <div class="chip" id="vp-cam-chip">
+          <span id="vp-ortho-label">Perspective</span> · dolly dist. <span id="vp-zoom-readout">—</span>
+        </div>
+      </div>
+    </div>
+
+    <aside class="props">
+      <div class="props-scroll">
+        <div class="complex-studio-panel">
+          <h2 class="complex-studio-title">Complex Design Studio</h2>
+          <p class="field-hint">
+            Describe a <strong>multi-part</strong> pendant (motif, stone layout, hollow cage, digit link). Optional
+            <strong>reference photo</strong> helps GPT-4o size the plate and stone notes. Analysis returns a JSON
+            manufacturing plan; build outputs <strong>main plate</strong> + separate <strong>digit link</strong> (OBJ/STL).
+          </p>
+          <div class="field">
+            <label>Brief (natural language)</label>
+            <textarea id="complex-brief" rows="5" placeholder="e.g. Medium rounded-rect pendant: baguette grid inside, round pavé around the rim, hollow 0.5 in wall, caged back, digit 6 link behind the chain (26 mm clearance)…"></textarea>
+          </div>
+          <label class="btn btn-ghost" style="cursor: pointer; margin: 0 0 10px 0; display: inline-block">
+            Reference photo (optional)
+            <input type="file" id="complex-photo" accept="image/png,image/jpeg,image/webp" hidden />
+          </label>
+          <p id="complex-photo-name" class="field-hint" style="min-height: 1.1em"></p>
+          <div class="complex-studio-actions">
+            <button type="button" class="btn" id="complex-analyze">Analyze brief (AI)</button>
+            <button type="button" class="btn btn-primary" id="complex-build">Build all parts</button>
+            <button type="button" class="btn btn-ghost" id="complex-load-main">Load main in viewport</button>
+          </div>
+          <p id="complex-status" class="field-hint" style="min-height: 1.25em"></p>
+          <pre id="complex-plan-out" class="complex-plan-pre hidden" aria-live="polite"></pre>
+          <div id="complex-links" class="complex-links hidden"></div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="workshop-ai-panel">
+          <h2 class="complex-studio-title">Workshop AI copilot</h2>
+          <p class="field-hint">
+            Elite structured assistance: jewelry builds, Complex/Cuban hints, and <strong>Blender / Rhino / MatrixGold</strong>
+            workflow bridges. Uses an OpenAI-compatible LLM on the server (<code>OPENAI_API_KEY</code> or
+            <code>OPENAI_BASE_URL</code> + <code>OPENAI_ALLOW_NO_KEY=1</code> for local Ollama). Desktop CAD still owns NURBS
+            history, constraints, and precise booleans — use this to plan and export, then refine in pro tools.
+          </p>
+          <div class="field">
+            <label>Ask anything</label>
+            <textarea id="copilot-in" rows="4" placeholder="e.g. Optimal export path to Rhino for shell offset? Tune Complex Studio for a 45mm hollow pendant. Blender: remesh then boolean steps…"></textarea>
+          </div>
+          <button type="button" class="btn btn-primary" id="copilot-ask">Ask copilot</button>
+          <pre id="copilot-out" class="complex-plan-pre hidden" style="margin-top: 10px" aria-live="polite"></pre>
+        </div>
+
+        <div class="divider"></div>
+
+        <h2>Text plate</h2>
+        <div class="field">
+          <label>Letters / numbers</label>
+          <input type="text" id="in-text" value="BRUCE" maxlength="28" autocomplete="off" />
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label>Width mm</label>
+            <input type="number" id="in-width" value="48" step="1" min="12" />
+          </div>
+          <div class="field">
+            <label>Plate depth mm</label>
+            <input type="number" id="in-depth" value="2.2" step="0.1" min="0.8" />
+          </div>
+        </div>
+        <div class="field">
+          <label>Seat depth ratio (blind pockets · solid back)</label>
+          <input type="number" id="in-seat" value="0.68" step="0.02" min="0.35" max="0.92" />
+        </div>
+        <div class="field">
+          <label>Halo round seats (count)</label>
+          <input type="number" id="in-rounds" value="36" step="1" min="8" />
+        </div>
+        <label class="chk"><input type="checkbox" id="in-bail" checked /> Bail & pavé seats</label>
+        <label class="chk"
+          ><input type="checkbox" id="in-print-tight" checked /> <strong>Tight print</strong> — fewer
+          triangles &amp; cutters (faster slice, smaller files)</label
+        >
+
+        <div class="divider"></div>
+
+        <h2>Vector scan → plate</h2>
+        <p class="field-hint">
+          Raster photo or export → <strong>potrace</strong> SVG → extrusion + same blind-seat CSG. Use a
+          <strong>high-contrast silhouette</strong> for clean edges (or tweak invert / threshold).
+        </p>
+        <label class="btn btn-ghost" style="cursor: pointer; margin: 0 0 8px 0; display: inline-block">
+          Choose image
+          <input type="file" id="vector-file" accept="image/png,image/jpeg,image/webp" hidden />
+        </label>
+        <label class="chk"
+          ><input type="checkbox" id="vector-invert" /> Invert luminance (try if trace misses the plate)</label
+        >
+        <label class="chk"
+          ><input type="checkbox" id="build-use-vector" /> Use <strong>last trace</strong> for outline (not
+          text font)</label
+        >
+        <button type="button" class="btn" id="vector-scan">Trace to SVG</button>
+        <p id="vector-meta" class="field-hint" style="min-height: 1.25em"></p>
+
+        <div class="workshop-export-panel">
+          <h3 class="complex-studio-title" style="margin-top: 4px">Exports &amp; vector</h3>
+          <p class="field-hint">Preferences are saved in this browser.</p>
+          <label class="chk"
+            ><input type="checkbox" id="pref-pop-animate" checked /> <strong>Pop-in</strong> when a mesh loads</label
+          >
+          <label class="chk"
+            ><input type="checkbox" id="pref-auto-stl" /> Auto-download <strong>STL</strong> after jewelry build</label
+          >
+          <label class="chk"
+            ><input type="checkbox" id="pref-auto-obj" /> Auto-download <strong>OBJ</strong> after jewelry build</label
+          >
+          <label class="chk"
+            ><input type="checkbox" id="pref-auto-cad" /> Auto-download <strong>CAD</strong> after jewelry build</label
+          >
+          <p class="field-hint" style="margin-top: 10px">Last traced SVG</p>
+          <div class="vp-pro-row vp-pro-row-tight">
+            <a
+              id="vector-svg-link"
+              class="btn btn-ghost mw-disabled"
+              href="#"
+              target="_blank"
+              rel="noopener"
+              style="flex: 1; min-width: 0; text-align: center"
+              aria-disabled="true"
+              >Open SVG</a
+            >
+            <button type="button" class="btn" id="vector-copy-url">Copy URL</button>
+          </div>
+          <p id="vector-pref-hint" class="field-hint" style="min-height: 1.1em"></p>
+        </div>
+
+        <h2>Forge view</h2>
+        <p class="field-hint">
+          Matrix Workshop <strong>precision viewport</strong> — orbit, zoom, pan, ortho, bookmarks, export. Shortcuts:
+          <kbd>F</kbd> frame · <kbd>`</kbd> ortho · <kbd>1–3</kbd> gizmo (✦ tool) · <kbd>Esc</kbd> orbit.
+        </p>
+        <div class="vp-pro-row vp-pro-row-tight">
+          <label class="chk"
+            ><input type="checkbox" id="vp-postfx" checked /> <strong>Gold rim</strong> (GPU outline)</label
+          >
+          <label class="chk"><input type="checkbox" id="vp-cad-edges" /> <strong>Technical edges</strong></label>
+          <label class="chk"><input type="checkbox" id="vp-turntable" /> Turntable</label>
+        </div>
+        <div class="vp-pro-row">
+          <button type="button" class="btn" id="vp-toggle-ortho">Ortho / Persp</button>
+          <button type="button" class="btn" id="vp-screenshot">Screenshot PNG</button>
+        </div>
+        <p class="field-hint">Axis views</p>
+        <div class="vp-pro-row">
+          <button type="button" class="btn btn-ghost" id="vp-view-iso">Iso</button>
+          <button type="button" class="btn btn-ghost" id="vp-view-front">Front</button>
+          <button type="button" class="btn btn-ghost" id="vp-view-back">Back</button>
+          <button type="button" class="btn btn-ghost" id="vp-view-top">Top</button>
+          <button type="button" class="btn btn-ghost" id="vp-view-bottom">Bottom</button>
+        </div>
+        <div class="vp-pro-row">
+          <button type="button" class="btn btn-ghost" id="vp-view-right">Right</button>
+          <button type="button" class="btn btn-ghost" id="vp-view-left">Left</button>
+        </div>
+        <p class="field-hint">Shading</p>
+        <div class="vp-pro-row vp-pro-row-tight">
+          <label class="chk"><input type="radio" name="vp-shade" value="metal" checked /> Metal</label>
+          <label class="chk"><input type="radio" name="vp-shade" value="clay" /> Clay</label>
+        </div>
+        <p class="field-hint">Gizmo mode (with ✦ tool)</p>
+        <div class="vp-pro-row">
+          <button type="button" class="btn btn-ghost" id="vp-mode-translate">Move</button>
+          <button type="button" class="btn btn-ghost" id="vp-mode-rotate">Rotate</button>
+          <button type="button" class="btn btn-ghost" id="vp-mode-scale">Scale</button>
+        </div>
+        <div class="row2">
+          <div class="field"><label>Tx</label><input type="number" id="vp-tx" step="0.1" value="0" /></div>
+          <div class="field"><label>Ty</label><input type="number" id="vp-ty" step="0.1" value="0" /></div>
+          <div class="field"><label>Tz</label><input type="number" id="vp-tz" step="0.1" value="0" /></div>
+        </div>
+        <div class="row2">
+          <div class="field"><label>Rx °</label><input type="number" id="vp-rx" step="0.5" value="0" /></div>
+          <div class="field"><label>Ry °</label><input type="number" id="vp-ry" step="0.5" value="0" /></div>
+          <div class="field"><label>Rz °</label><input type="number" id="vp-rz" step="0.5" value="0" /></div>
+        </div>
+        <div class="field">
+          <label>Uniform scale</label>
+          <input type="number" id="vp-s" step="0.001" value="1" min="0.001" />
+        </div>
+        <p class="field-hint">Snap (✦ gizmo — on mouse release)</p>
+        <div class="field">
+          <label>Grid increment (mm; rotation snaps to same number as degrees when ≥1)</label>
+          <select id="vp-snap">
+            <option value="0">Off</option>
+            <option value="0.1">0.1</option>
+            <option value="0.25">0.25</option>
+            <option value="0.5">0.5</option>
+            <option value="1">1</option>
+            <option value="5">5</option>
+          </select>
+        </div>
+        <p class="field-hint">Named camera bookmarks</p>
+        <div class="row2">
+          <div class="field">
+            <label>Name</label>
+            <input type="text" id="vp-bm-name" placeholder="e.g. Client angle" autocomplete="off" />
+          </div>
+          <button type="button" class="btn" id="vp-bm-save" style="align-self: flex-end">Save view</button>
+        </div>
+        <div class="vp-pro-row">
+          <select id="vp-bm-list" style="flex: 1; min-width: 0"></select>
+          <button type="button" class="btn btn-ghost" id="vp-bm-recall">Recall</button>
+          <button type="button" class="btn btn-ghost" id="vp-bm-delete">Delete</button>
+        </div>
+        <div class="vp-pro-row">
+          <button type="button" class="btn btn-primary" id="vp-export-obj">Export scene OBJ</button>
+        </div>
+        <div class="field">
+          <label>Clip plane Y position</label>
+          <input type="range" id="clip-slider" min="-40" max="40" value="0" step="0.5" />
+        </div>
+        <label class="chk"><input type="checkbox" id="toggle-wire" /> Wireframe</label>
+        <label class="chk"><input type="checkbox" id="toggle-grid" checked /> Grid</label>
+        <div class="row2">
+          <button type="button" class="btn" id="load-last">Load last build</button>
+          <button type="button" class="btn" id="load-bruce">Load BRUCE</button>
+        </div>
+
+        <div class="divider"></div>
+
+        <h2>Miami Cuban lab</h2>
+        <p class="field-hint">
+          <strong>100</strong> deterministic setups: face width <strong>8–26 mm</strong>, finished length
+          <strong>16–30 in</strong>, ten style families. Mesh exports one <strong>link</strong> plus
+          <strong>box clasp</strong> proxies (male/female + safety torus). Reference:
+          <a href="/api/cuban/reference" target="_blank" rel="noopener">technical notes</a>
+          ·
+          <a href="/api/cuban/reference?extended=1" target="_blank" rel="noopener">extended</a>
+        </p>
+
+        <div class="chain-photo-panel">
+          <h3 class="chain-photo-title">Photo → AI → print</h3>
+          <p class="field-hint">
+            Upload a <strong>chain photo</strong> (files or camera). Say what you want different. Vision uses
+            <strong>vision LLM</strong> (same OpenAI-compatible config as copilot). Optional photo edits use Replicate
+            instruct-pix2pix (<code>REPLICATE_API_TOKEN</code>). Mesh is <strong>mm-scale STL</strong> for
+            slicing — verify dimensions against calipers.
+          </p>
+          <div id="chain-photo-drop" class="chain-photo-drop" tabindex="0">
+            <p class="chain-photo-drop-txt">
+              Drag &amp; drop an image here, or use the buttons below
+            </p>
+            <div class="chain-photo-btns">
+              <label class="btn btn-primary" style="cursor: pointer; margin: 0"
+                >Files
+                <input type="file" id="chain-photo-file" accept="image/*" hidden />
+              </label>
+              <label class="btn" style="cursor: pointer; margin: 0"
+                >Camera
+                <input type="file" id="chain-photo-cam" accept="image/*" capture="environment" hidden />
+              </label>
+            </div>
+            <img id="chain-photo-preview" class="chain-photo-preview hidden" alt="Chain preview" />
+          </div>
+          <div class="field">
+            <label>What do you want different? (size, finish, iced, length…)</label>
+            <textarea id="chain-photo-notes" placeholder="e.g. Same look but 14mm face, 22 inch, more iced on the flat faces…" rows="3"></textarea>
+          </div>
+          <div class="chain-photo-actions">
+            <button type="button" class="btn" id="chain-photo-analyze">Analyze photo (AI)</button>
+            <button type="button" class="btn btn-primary" id="chain-photo-print">One-click: analyze + STL</button>
+            <button type="button" class="btn" id="chain-photo-refine">Photo → photo (Replicate)</button>
+            <button type="button" class="btn" id="chain-photo-semantic">Render target look (DALL·E / Flux)</button>
+            <button type="button" class="btn btn-ghost" id="chain-photo-apply-preset">Apply matched preset</button>
+            <button type="button" class="btn btn-ghost" id="chain-blender-open">Open in Blender</button>
+          </div>
+          <div class="row2 chain-cal">
+            <div class="field">
+              <label>Caliper: link width (mm)</label>
+              <input type="number" id="chain-cal-width" step="0.1" min="4" max="80" placeholder="e.g. 12" />
+            </div>
+            <div class="field">
+              <label>Caliper: finished length (in)</label>
+              <input type="number" id="chain-cal-length" step="0.25" min="5" max="40" placeholder="e.g. 22" />
+            </div>
+          </div>
+          <div class="chain-photo-actions">
+            <button type="button" class="btn btn-primary" id="chain-cal-rebuild">Apply calipers + rebuild STL</button>
+            <button type="button" class="btn" id="chain-mesh-stats">STL stats (triangles / bbox)</button>
+            <button type="button" class="btn" id="chain-export-pack">Print pack (README + zip)</button>
+          </div>
+          <div class="field">
+            <label>Vision memory (saved biases for future photo AI)</label>
+            <input type="text" id="chain-feedback-text" placeholder="e.g. Prefer 14mm face when unsure…" autocomplete="off" />
+          </div>
+          <button type="button" class="btn btn-ghost" id="chain-feedback-save">Save to memory</button>
+          <p id="chain-mesh-stats-out" class="field-hint" style="min-height: 1.25em"></p>
+          <pre id="chain-photo-analysis" class="chain-photo-pre hidden"></pre>
+          <p id="chain-photo-status" class="field-hint"></p>
+        </div>
+
+        <div class="cuban-filters">
+          <div class="field">
+            <label>Length (in)</label>
+            <select id="cuban-filter-length">
+              <option value="">All</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Face width (mm)</label>
+            <select id="cuban-filter-width">
+              <option value="">All</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Style</label>
+            <select id="cuban-filter-style">
+              <option value="">All</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Search id / notes</label>
+          <input type="search" id="cuban-search" placeholder="e.g. cuban_024, hollow, 22 in…" autocomplete="off" />
+        </div>
+        <div id="cuban-grid" class="cuban-grid" aria-label="Cuban presets"></div>
+        <div id="cuban-detail" class="cuban-detail hidden">
+          <div class="cuban-detail-head">
+            <h3 id="cuban-detail-title">Preset</h3>
+            <span id="cuban-detail-badge" class="cuban-badge"></span>
+          </div>
+          <dl class="cuban-spec" id="cuban-spec"></dl>
+          <div class="cuban-convert row2">
+            <div class="field">
+              <label>Converter (length)</label>
+              <input type="number" id="cuban-conv-in" placeholder="inches" step="0.125" />
+            </div>
+            <div class="field">
+              <label>→ mm</label>
+              <input type="text" readonly id="cuban-conv-out" />
+            </div>
+          </div>
+          <div class="cuban-actions">
+            <button type="button" class="btn btn-primary" id="cuban-build">Build link + clasp mesh</button>
+            <button type="button" class="btn" id="cuban-fill-prompt">Fill AI prompt</button>
+            <button type="button" class="btn" id="cuban-gen-img">Generate catalog image</button>
+            <button type="button" class="btn btn-ghost" id="cuban-copy-spec">Copy spec JSON</button>
+          </div>
+          <p id="cuban-detail-hint" class="field-hint"></p>
+        </div>
+
+        <div class="divider"></div>
+
+        <h2>AI image studio</h2>
+        <p id="ai-provider-badge" class="field-hint">Checking providers…</p>
+        <div class="row2">
+          <div class="field">
+            <label>Engine</label>
+            <select id="ai-provider">
+              <option value="auto">Auto (OpenAI → Replicate → local)</option>
+              <option value="openai">OpenAI DALL·E 3</option>
+              <option value="replicate">Replicate Flux Schnell</option>
+              <option value="local">Local HD only (no API)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Look</label>
+            <select id="ai-style">
+              <option value="studio">Studio / catalog</option>
+              <option value="editorial">Editorial / fashion</option>
+              <option value="cad_technical">CAD-technical</option>
+              <option value="luxury_dark">Luxury dark set</option>
+              <option value="cuban_studio">Miami Cuban · studio</option>
+              <option value="cuban_macro">Miami Cuban · macro clasp</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Saved prefix (applied when “Use saved prefs” is on)</label>
+          <input type="text" id="ai-prefix" placeholder="e.g. 18k white gold, pavé halo, shot on Phase One…" autocomplete="off" />
+        </div>
+        <div class="field">
+          <label>Prompt</label>
+          <textarea id="in-prompt" placeholder="Describe the piece exactly as you want it seen…"></textarea>
+        </div>
+        <label class="chk"
+          ><input type="checkbox" id="ai-enhance" /> <strong>Expand prompt</strong> (GPT-4o-mini, needs OpenAI key)</label
+        >
+        <label class="chk"><input type="checkbox" id="ai-use-saved" checked /> Use saved defaults (prefix + toggles below)</label>
+        <label class="chk"><input type="checkbox" id="ai-enhance-default" /> Saved: always expand prompts</label>
+        <label class="chk"><input type="checkbox" id="ai-remember-prompt" checked /> Remember this prompt in history</label>
+        <label class="chk"
+          ><input type="checkbox" id="ai-metal-only" /> <strong>Metal only</strong> — catalog shot without diamonds or
+          gemstones</label
+        >
+        <div class="vp-pro-row">
+          <button type="button" class="btn" id="ai-gen">Generate image</button>
+          <a class="btn btn-ghost" id="ai-dl-png" href="#" download style="line-height: 1.2; padding-top: 9px"
+            >Download PNG</a
+          >
+        </div>
+        <button type="button" class="btn btn-ghost" id="ai-save-defaults">Save engine + look as default</button>
+        <p id="ai-last-meta" class="field-hint"></p>
+        <img id="ai-preview" alt="" />
+
+        <div class="divider"></div>
+        <p style="color:var(--muted);font-size:11px;line-height:1.5;margin:0">
+          Seats are <strong>blind</strong> (closed back). Scroll wheel zoom · right-drag pan · left-drag orbit.
+          Subtractive box is for layout reference; boolean rebuild uses the server pipeline.
+        </p>
+      </div>
+    </aside>
+
+    <footer class="statusbar">
+      <span id="stat-xyz"></span>
+      <span>units ≈ millimetres · ACES · PMREM</span>
+    </footer>
+  </div>
+
+  <div id="build-overlay" class="build-overlay hidden" role="status" aria-live="polite" aria-busy="false">
+    <div class="build-overlay-card">
+      <h3 id="build-overlay-title" class="build-overlay-title">Working…</h3>
+      <p id="build-overlay-sub" class="build-overlay-sub"></p>
+      <div class="build-progress-track" aria-hidden="true">
+        <div id="build-overlay-fill" class="build-progress-fill"></div>
+      </div>
+      <p id="build-overlay-detail" class="build-overlay-detail"></p>
+    </div>
+  </div>
+  <div id="toast" class="toast"></div>
+  <div id="app-status-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="app-status-title">
+    <div class="modal-card modal-card--status">
+      <h3 id="app-status-title" class="modal-title">App status &amp; issues</h3>
+      <p class="status-meta">
+        <strong>Package version</strong> <span id="app-status-version">—</span>
+        · <strong>Port</strong> <span id="app-status-port">—</span>
+      </p>
+      <p class="status-meta"><strong>Platform / vision model</strong> <span id="app-status-platform">—</span></p>
+      <dl class="status-dl">
+        <div><dt>LLM chat base URL</dt><dd id="app-status-llm-base">—</dd></div>
+        <div><dt>Server process started</dt><dd id="app-status-started">—</dd></div>
+        <div><dt>server.js last modified (backend)</dt><dd id="app-status-mtime">—</dd></div>
+        <div><dt>This panel refreshed</dt><dd id="app-status-checked">—</dd></div>
+      </dl>
+      <p class="status-section-label">Blocking issues and optional notes</p>
+      <ul id="app-status-issues" class="modal-list status-issue-list"></ul>
+      <p class="status-foot">Restart the Node server after changing <code>.env</code>. The <code>server.js</code> time is the best proxy for “last backend edit” on this machine.</p>
+      <button type="button" class="btn btn-primary" id="app-status-close">Close</button>
+    </div>
+  </div>
+  <div id="help-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="help-modal-title">
+    <div class="modal-card">
+      <h3 id="help-modal-title" class="modal-title">Shortcuts &amp; tips</h3>
+      <ul class="modal-list">
+        <li><kbd>?</kbd> — toggle this panel (not while typing in a field)</li>
+        <li>Scroll — zoom · Right-drag — pan · Left-drag — orbit · ✦ tool = gizmo + numeric transform</li>
+        <li><kbd>F</kbd> frame mesh · <kbd>`</kbd> ortho/persp · <kbd>1–3</kbd> gizmo modes (with ✦) · <kbd>Esc</kbd> orbit tool</li>
+        <li>Forge view: GPU gold rim, technical edges, turntable, six axis views, clay/metal, screenshot, export OBJ</li>
+        <li>Chain: upload → analyze → optional calipers → print pack → Blender</li>
+        <li>Complex studio: brief (+ optional photo) → analyze → build main + digit link → load main</li>
+        <li><a href="/guide.html" target="_blank" rel="noopener">Open the setup guide</a> (install, .env, dashboard URL)</li>
+      </ul>
+      <button type="button" class="btn btn-primary" id="help-modal-close">Close</button>
+    </div>
+  </div>
+  <script type="module" src="/js/app-status.js"></script>
+  <script type="module" src="/js/workshop.js"></script>
+  <script type="module" src="/js/workshop-copilot.js"></script>
+  <script type="module" src="/js/complex-studio.js"></script>
+  <script type="module" src="/js/cuban-chain.js"></script>
+  <script type="module" src="/js/chain-photo-flow.js"></script>
+</body>
+</html>

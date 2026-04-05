@@ -1,0 +1,40 @@
+{
+  "name": "matrix-ai-hub",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Standalone Vercel dashboard for custom LLM + Matrix Workshop API bridge (separate deploy from AI3DDesign server)",
+  "scripts": {
+    "dev": "next dev -p 3010",
+    "build": "next build",
+    "start": "next start -p 3010",
+    "lint": "next lint",
+    "finetune": "node scripts/run-finetune.mjs",
+    "finetune:queue": "FINETUNE_MAX_WAIT_MIN=0 node scripts/run-finetune.mjs",
+    "finetune:sync": "node scripts/finetune-sync.mjs",
+    "finetune:status": "node scripts/finetune-sync.mjs --no-poll",
+    "generate-sft": "node scripts/generate-sft-dataset.mjs",
+    "validate-sft": "node scripts/validate-sft-jsonl.mjs training/matrix-workshop-sft.jsonl"
+  },
+  "dependencies": {
+    "next": "^15.1.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "dotenv": "^16.6.1",
+    "eslint": "^9.17.0",
+    "eslint-config-next": "^15.1.0",
+    "openai": "^4.77.0",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.7.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -1,0 +1,175 @@
+<svg width="1024" height="1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="metalGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f0f0f0;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#d0d0d0;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#b0b0b0;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="shadowGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#808080;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#404040;stop-opacity:1" />
+    </linearGradient>
+    <filter id="metallic">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+      <feOffset dx="2" dy="2" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.5"/>
+      </feComponentTransfer>
+      <feMerge> 
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/> 
+      </feMerge>
+    </filter>
+    <filter id="innerShadow">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
+      <feOffset dx="1" dy="1" result="offsetblur"/>
+      <feFlood flood-color="#000000" flood-opacity="0.5"/>
+      <feComposite in2="offsetblur" operator="in"/>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1024" height="1024" fill="#2a2a2a"/>
+  
+  <!-- Drop shadow for pendant -->
+  <ellipse cx="512" cy="580" rx="280" ry="40" fill="#000000" opacity="0.3"/>
+  
+  <!-- Main pendant body -->
+  <rect x="232" y="380" width="560" height="120" rx="15" ry="15" fill="url(#metalGradient)" filter="url(#metallic)"/>
+  
+  <!-- Inner shadow for depth -->
+  <rect x="240" y="388" width="544" height="104" rx="10" ry="10" fill="none" stroke="url(#shadowGradient)" stroke-width="2" opacity="0.6"/>
+  
+  <!-- Letter B with holes -->
+  <g id="letterB">
+    <path d="M 280 420 L 280 460 L 300 460 C 310 460 318 456 318 440 C 318 424 310 420 300 420 L 280 420 Z M 280 460 L 280 500 L 305 500 C 320 500 328 494 328 480 C 328 466 320 460 305 460 L 280 460 Z" fill="url(#metalGradient)" filter="url(#metallic)"/>
+    <!-- Diamond holes in B -->
+    <circle cx="290" cy="430" r="3" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="305" cy="435" r="3" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="295" cy="445" r="3" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="310" cy="450" r="3" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="290" cy="455" r="3" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="305" cy="465" r="3" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="295" cy="475" r="3" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="310" cy="485" r="3" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="290" cy="490" r="3" fill="#2a2a2a" filter="url(#innerShadow)"/>
+  </g>
+  
+  <!-- Letter R with holes -->
+  <g id="letterR">
+    <path d="M 360 420 L 360 500 L 370 500 L 370 460 L 385 460 C 395 460 403 456 403 440 C 403 424 395 420 385 420 L 370 420 L 370 420 Z M 370 460 L 370 500 L 385 500 L 403 480 L 395 470 L 370 460 Z" fill="url(#metalGradient)" filter="url(#metallic)"/>
+    <!-- Diamond holes in R -->
+    <circle cx="375" cy="430" r="3" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="390" cy="435" r="3" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="380" cy="445" r="3" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="395" cy="450" r="3" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="375" cy="465" r="3" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="385" cy="475" r="3" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="395" cy="485" r="3" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="375" cy="490" r="3" fill="#2a2a2a" filter="url(#innerShadow)"/>
+  </g>
+  
+  <!-- Letter U with holes -->
+  <g id="letterU">
+    <path d="M 440 420 L 440 480 C 440 490 445 500 460 500 C 475 500 480 490 480 480 L 480 420 L 470 420 L 470 480 C 470 485 468 490 460 490 C 452 490 450 485 450 480 L 450 420 Z" fill="url(#metalGradient)" filter="url(#metallic)"/>
+    <!-- Diamond holes in U -->
+    <circle cx="455" cy="430" r="3" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="465" cy="440" r="3" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="455" cy="450" r="3" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="465" cy="460" r="3" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="460" cy="470" r="3" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="455" cy="480" r="3" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="465" cy="485" r="3" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="460" cy="495" r="3" fill="#2a2a2a" filter="url(#innerShadow)"/>
+  </g>
+  
+  <!-- Letter C with holes -->
+  <g id="letterC">
+    <path d="M 540 480 C 540 490 545 500 560 500 C 575 500 580 490 580 480 L 580 440 C 580 430 575 420 560 420 C 545 420 540 430 540 440 L 550 440 C 550 435 553 430 560 430 C 567 430 570 435 570 440 L 570 480 C 570 485 567 490 560 490 C 553 490 550 485 550 480 Z" fill="url(#metalGradient)" filter="url(#metallic)"/>
+    <!-- Diamond holes in C -->
+    <circle cx="555" cy="430" r="3" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="565" cy="435" r="3" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="550" cy="445" r="3" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="565" cy="450" r="3" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="555" cy="460" r="3" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="565" cy="470" r="3" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="550" cy="480" r="3" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="565" cy="485" r="3" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="555" cy="495" r="3" fill="#2a2a2a" filter="url(#innerShadow)"/>
+  </g>
+  
+  <!-- Letter E with holes -->
+  <g id="letterE">
+    <path d="M 620 420 L 620 500 L 660 500 L 660 490 L 630 490 L 630 460 L 655 460 L 655 450 L 630 450 L 630 430 L 660 430 L 660 420 Z" fill="url(#metalGradient)" filter="url(#metallic)"/>
+    <!-- Diamond holes in E -->
+    <circle cx="635" cy="430" r="3" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="650" cy="435" r="3" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="635" cy="445" r="3" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="650" cy="455" r="3" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="635" cy="465" r="3" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="650" cy="475" r="3" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="635" cy="485" r="3" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="650" cy="490" r="3" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="635" cy="495" r="3" fill="#2a2a2a" filter="url(#innerShadow)"/>
+  </g>
+  
+  <!-- Round diamond holes around pendant perimeter -->
+  <g id="perimeter-holes">
+    <!-- Top row -->
+    <circle cx="250" cy="370" r="4" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="300" cy="365" r="4" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="350" cy="362" r="4" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="400" cy="360" r="4" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="450" cy="358" r="4" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="500" cy="357" r="4" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="550" cy="358" r="4" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="600" cy="360" r="4" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="650" cy="362" r="4" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="700" cy="365" r="4" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="750" cy="370" r="4" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    
+    <!-- Bottom row -->
+    <circle cx="250" cy="510" r="4" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="300" cy="515" r="4" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="350" cy="518" r="4" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="400" cy="520" r="4" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="450" cy="522" r="4" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="500" cy="523" r="4" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="550" cy="522" r="4" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="600" cy="520" r="4" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="650" cy="518" r="4" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="700" cy="515" r="4" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="750" cy="510" r="4" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    
+    <!-- Left side -->
+    <circle cx="220" cy="400" r="4" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="218" cy="430" r="4" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="217" cy="460" r="4" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="218" cy="490" r="4" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    
+    <!-- Right side -->
+    <circle cx="780" cy="400" r="4" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="782" cy="430" r="4" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="783" cy="460" r="4" fill="#2a2a2a" filter="url(#innerShadow)"/>
+    <circle cx="782" cy="490" r="4" fill="#2a2a2a" filter="url(#innerShadow)"/>
+  </g>
+  
+  <!-- Highlight for metallic effect -->
+  <ellipse cx="400" cy="420" rx="80" ry="20" fill="#ffffff" opacity="0.3"/>
+  
+  <!-- Fine details and texture -->
+  <g opacity="0.2">
+    <line x1="240" y1="390" x2="240" y2="490" stroke="#808080" stroke-width="0.5"/>
+    <line x1="250" y1="385" x2="250" y2="495" stroke="#808080" stroke-width="0.5"/>
+    <line x1="260" y1="382" x2="260" y2="498" stroke="#808080" stroke-width="0.5"/>
+    <line x1="270" y1="380" x2="270" y2="500" stroke="#808080" stroke-width="0.5"/>
+    <line x1="760" y1="380" x2="760" y2="500" stroke="#808080" stroke-width="0.5"/>
+    <line x1="770" y1="382" x2="770" y2="498" stroke="#808080" stroke-width="0.5"/>
+    <line x1="780" y1="385" x2="780" y2="495" stroke="#808080" stroke-width="0.5"/>
+    <line x1="790" y1="390" x2="790" y2="490" stroke="#808080" stroke-width="0.5"/>
+  </g>
+</svg>

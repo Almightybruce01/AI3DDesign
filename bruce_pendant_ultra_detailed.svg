@@ -1,0 +1,252 @@
+<svg width="2048" height="2048" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2048 2048">
+  <defs>
+    <!-- Ultra-realistic metal gradients -->
+    <radialGradient id="platinumGradient" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="15%" style="stop-color:#f8f8f8;stop-opacity:1" />
+      <stop offset="35%" style="stop-color:#e8e8e8;stop-opacity:1" />
+      <stop offset="60%" style="stop-color:#d0d0d0;stop-opacity:1" />
+      <stop offset="85%" style="stop-color:#a8a8a8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#808080;stop-opacity:1" />
+    </radialGradient>
+    
+    <linearGradient id="edgeHighlight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.8" />
+      <stop offset="50%" style="stop-color:#f0f0f0;stop-opacity:0.4" />
+      <stop offset="100%" style="stop-color:#d0d0d0;stop-opacity:0.2" />
+    </linearGradient>
+    
+    <radialGradient id="holeDepth" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#000000;stop-opacity:0.9" />
+      <stop offset="50%" style="stop-color:#1a1a1a;stop-opacity:0.7" />
+      <stop offset="100%" style="stop-color:#2a2a2a;stop-opacity:0.5" />
+    </radialGradient>
+    
+    <!-- Advanced filters for realism -->
+    <filter id="ultraMetallic" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur"/>
+      <feSpecularLighting result="specOut" in="blur" specularConstant="2.5" specularExponent="20" lighting-color="white">
+        <fePointLight x="200" y="200" z="500"/>
+      </feSpecularLighting>
+      <feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut2"/>
+      <feComposite in="SourceGraphic" in2="specOut2" operator="arithmetic" k1="0" k2="1" k3="1" k4="0"/>
+    </filter>
+    
+    <filter id="innerShadow3D" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="blur"/>
+      <feOffset in="blur" dx="2" dy="2" result="offsetBlur"/>
+      <feFlood flood-color="#000000" flood-opacity="0.8" result="offsetColor"/>
+      <feComposite in="offsetColor" in2="offsetBlur" operator="in" result="offsetBlur"/>
+      <feComposite in="SourceGraphic" in2="offsetBlur" operator="over"/>
+    </filter>
+    
+    <filter id="polishReflection" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="1" result="blur"/>
+      <feSpecularLighting result="specOut" in="blur" specularConstant="1.5" specularExponent="30" lighting-color="white">
+        <feDistantLight azimuth="45" elevation="60"/>
+      </feSpecularLighting>
+      <feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut2"/>
+      <feComposite in="SourceGraphic" in2="specOut2" operator="arithmetic" k1="0" k2="1" k3="1" k4="0"/>
+    </filter>
+    
+    <!-- Texture patterns -->
+    <pattern id="microBrush" x="0" y="0" width="4" height="4" patternUnits="userSpaceOnUse">
+      <rect width="4" height="4" fill="#f0f0f0"/>
+      <circle cx="1" cy="1" r="0.5" fill="#ffffff" opacity="0.6"/>
+      <circle cx="3" cy="3" r="0.5" fill="#ffffff" opacity="0.4"/>
+    </pattern>
+    
+    <pattern id="scratchTexture" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+      <rect width="20" height="20" fill="transparent"/>
+      <line x1="0" y1="5" x2="20" y2="5" stroke="#888888" stroke-width="0.2" opacity="0.3"/>
+      <line x1="0" y1="12" x2="15" y2="12" stroke="#888888" stroke-width="0.15" opacity="0.2"/>
+      <line x1="5" y1="0" x2="5" y2="20" stroke="#888888" stroke-width="0.1" opacity="0.25"/>
+    </pattern>
+  </defs>
+  
+  <!-- Professional studio background -->
+  <rect width="2048" height="2048" fill="#1a1a1a"/>
+  <ellipse cx="1024" cy="1600" rx="600" ry="100" fill="#0a0a0a" opacity="0.5"/>
+  
+  <!-- Main pendant with ultra-detailed rendering -->
+  <g transform="translate(1024, 1024)">
+    <!-- Shadow base -->
+    <ellipse cx="0" cy="120" rx="420" ry="60" fill="#000000" opacity="0.4" filter="feGaussianBlur(stdDeviation=8)"/>
+    
+    <!-- Pendant body base -->
+    <rect x="-400" y="-60" width="800" height="120" rx="20" ry="20" fill="url(#platinumGradient)" filter="url(#ultraMetallic)"/>
+    
+    <!-- Micro-surface texture -->
+    <rect x="-400" y="-60" width="800" height="120" rx="20" ry="20" fill="url(#microBrush)" opacity="0.15"/>
+    <rect x="-400" y="-60" width="800" height="120" rx="20" ry="20" fill="url(#scratchTexture)" opacity="0.1"/>
+    
+    <!-- Edge highlights for 3D effect -->
+    <rect x="-400" y="-60" width="800" height="120" rx="20" ry="20" fill="none" stroke="url(#edgeHighlight)" stroke-width="3" opacity="0.7"/>
+    <rect x="-395" y="-55" width="790" height="110" rx="18" ry="18" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.3"/>
+    
+    <!-- Letter B with ultra-detailed holes -->
+    <g id="letterB-ultra">
+      <path d="M -320 -30 L -320 30 L -290 30 C -270 30 -255 24 -255 0 C -255 -24 -270 -30 -290 -30 Z M -320 30 L -320 90 L -280 90 C -250 90 -235 80 -235 60 C -235 40 -250 30 -280 30 Z" 
+            fill="url(#platinumGradient)" filter="url(#polishReflection)"/>
+      
+      <!-- Precision diamond holes with 3D depth -->
+      <circle cx="-305" cy="-20" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="-285" cy="-15" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="-295" cy="-5" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="-275" cy="0" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="-305" cy="5" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="-285" cy="15" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="-295" cy="25" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="-275" cy="35" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="-305" cy="45" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="-290" cy="55" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="-270" cy="65" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="-285" cy="75" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="-305" cy="85" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+    </g>
+    
+    <!-- Letter R with ultra-detailed holes -->
+    <g id="letterR-ultra">
+      <path d="M -200 -30 L -200 90 L -180 90 L -180 30 L -150 30 C -130 30 -115 24 -115 0 C -115 -24 -130 -30 -150 -30 L -180 -30 Z M -180 30 L -180 90 L -150 90 L -115 60 L -125 45 L -180 30 Z" 
+            fill="url(#platinumGradient)" filter="url(#polishReflection)"/>
+      
+      <circle cx="-185" cy="-20" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="-165" cy="-15" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="-175" cy="-5" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="-155" cy="0" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="-185" cy="10" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="-170" cy="20" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="-155" cy="30" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="-185" cy="40" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="-175" cy="50" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="-160" cy="60" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="-185" cy="70" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="-170" cy="80" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+    </g>
+    
+    <!-- Letter U with ultra-detailed holes -->
+    <g id="letterU-ultra">
+      <path d="M -80 -30 L -80 50 C -80 80 -70 90 -40 90 C -10 90 0 80 0 50 L 0 -30 L -20 -30 L -20 50 C -20 65 -25 70 -40 70 C -55 70 -60 65 -60 50 L -60 -30 Z" 
+            fill="url(#platinumGradient)" filter="url(#polishReflection)"/>
+      
+      <circle cx="-65" cy="-20" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="-45" cy="-15" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="-55" cy="-5" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="-35" cy="0" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="-45" cy="10" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="-25" cy="15" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="-40" cy="25" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="-55" cy="35" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="-40" cy="45" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="-25" cy="55" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="-40" cy="65" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="-55" cy="75" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="-40" cy="85" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+    </g>
+    
+    <!-- Letter C with ultra-detailed holes -->
+    <g id="letterC-ultra">
+      <path d="M 60 50 C 60 80 70 90 100 90 C 130 90 140 80 140 50 L 140 -10 C 140 -40 130 -50 100 -50 C 70 -50 60 -40 60 -10 L 80 -10 C 80 -25 85 -30 100 -30 C 115 -30 120 -25 120 -10 L 120 50 C 120 65 115 70 100 70 C 85 70 80 65 80 50 Z" 
+            fill="url(#platinumGradient)" filter="url(#polishReflection)"/>
+      
+      <circle cx="75" cy="-40" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="95" cy="-35" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="70" cy="-25" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="95" cy="-20" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="75" cy="-10" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="95" cy="0" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="70" cy="10" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="95" cy="20" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="75" cy="30" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="95" cy="40" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="70" cy="50" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="95" cy="60" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="75" cy="70" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="95" cy="80" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+    </g>
+    
+    <!-- Letter E with ultra-detailed holes -->
+    <g id="letterE-ultra">
+      <path d="M 200 -30 L 200 90 L 280 90 L 280 70 L 220 70 L 220 30 L 270 30 L 270 10 L 220 10 L 220 -30 L 280 -30 L 280 -50 L 200 -50 Z" 
+            fill="url(#platinumGradient)" filter="url(#polishReflection)"/>
+      
+      <circle cx="215" cy="-40" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="235" cy="-35" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="255" cy="-30" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="215" cy="-20" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="235" cy="-15" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="255" cy="-10" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="215" cy="0" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="235" cy="5" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="255" cy="10" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="215" cy="20" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="235" cy="25" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="255" cy="30" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="215" cy="40" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="235" cy="45" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="255" cy="50" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="215" cy="60" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="235" cy="65" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="255" cy="70" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="215" cy="80" r="4" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+    </g>
+    
+    <!-- Premium perimeter holes with enhanced depth -->
+    <g id="perimeter-ultra">
+      <!-- Top row with precise spacing -->
+      <circle cx="-380" cy="-70" r="5" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="-320" cy="-75" r="5" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="-260" cy="-78" r="5" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="-200" cy="-80" r="5" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="-140" cy="-78" r="5" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="-80" cy="-75" r="5" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="-20" cy="-70" r="5" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="40" cy="-75" r="5" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="100" cy="-78" r="5" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="160" cy="-80" r="5" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="220" cy="-78" r="5" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="280" cy="-75" r="5" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="340" cy="-70" r="5" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="380" cy="-70" r="5" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      
+      <!-- Bottom row -->
+      <circle cx="-380" cy="70" r="5" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="-320" cy="75" r="5" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="-260" cy="78" r="5" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="-200" cy="80" r="5" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="-140" cy="78" r="5" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="-80" cy="75" r="5" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="-20" cy="70" r="5" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="40" cy="75" r="5" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="100" cy="78" r="5" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="160" cy="80" r="5" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="220" cy="78" r="5" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="280" cy="75" r="5" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="340" cy="70" r="5" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="380" cy="70" r="5" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      
+      <!-- Side holes -->
+      <circle cx="-420" cy="-40" r="5" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="-425" cy="0" r="5" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="-420" cy="40" r="5" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="420" cy="-40" r="5" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="425" cy="0" r="5" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+      <circle cx="420" cy="40" r="5" fill="url(#holeDepth)" filter="url(#innerShadow3D)"/>
+    </g>
+    
+    <!-- Ultra-realistic highlights and reflections -->
+    <ellipse cx="-200" cy="-20" rx="120" ry="30" fill="#ffffff" opacity="0.25" filter="feGaussianBlur(stdDeviation=8)"/>
+    <ellipse cx="100" cy="-10" rx="80" ry="20" fill="#ffffff" opacity="0.2" filter="feGaussianBlur(stdDeviation=6)"/>
+    <ellipse cx="0" cy="-15" rx="60" ry="15" fill="#ffffff" opacity="0.15" filter="feGaussianBlur(stdDeviation=4)"/>
+    
+    <!-- Fine surface details -->
+    <g opacity="0.1">
+      <line x1="-390" y1="-50" x2="-390" y2="50" stroke="#ffffff" stroke-width="0.3"/>
+      <line x1="-370" y1="-55" x2="-370" y2="55" stroke="#ffffff" stroke-width="0.3"/>
+      <line x1="-350" y1="-58" x2="-350" y2="58" stroke="#ffffff" stroke-width="0.3"/>
+      <line x1="390" y1="-50" x2="390" y2="50" stroke="#ffffff" stroke-width="0.3"/>
+      <line x1="370" y1="-55" x2="370" y2="55" stroke="#ffffff" stroke-width="0.3"/>
+      <line x1="350" y1="-58" x2="350" y2="58" stroke="#ffffff" stroke-width="0.3"/>
+    </g>
+  </g>
+</svg>

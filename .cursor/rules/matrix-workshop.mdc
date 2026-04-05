@@ -1,0 +1,27 @@
+---
+description: Matrix Workshop / AI3DDesign — jewelry CAD server, pipelines, and AI hub
+alwaysApply: true
+---
+
+# AI3DDesign — Cursor context
+
+This repo is **Matrix Workshop**: Node `server.js` + `public/` Three.js viewport + `scripts/*-build.mjs` (jewelry CSG, Cuban chain, complex pendant).
+
+## Always read first
+
+- **`AGENTS.md`** — pipeline, flags (`printTight`, `referenceIced`, `vectorId`), exports, performance. Treat as source of truth for CAD behavior.
+
+## Two deployables
+
+1. **Workshop** — `node server.js`. Static files and paths resolve from **`__dirname`** (`ROOT`), not `cwd`. See `DEPLOY.md` / `Dockerfile`.
+2. **`matrix-ai-hub/`** — separate **Next.js** app for Vercel (`npm run dev` → port **3010**). Own `package.json`. Not merged into `server.js`. Fine-tune: `npm run finetune` from `matrix-ai-hub/` (needs `OPENAI_API_KEY`).
+
+## LLM / AI
+
+- Server chat/vision uses **`lib/openai-compatible.js`**: `OPENAI_BASE_URL`, `OPENAI_API_KEY`, optional `OPENAI_ALLOW_NO_KEY=1`.
+- Hub chat injects **`matrix-ai-hub/lib/elite-system-prompt.ts`** server-side; optional `LLM_SYSTEM_APPEND` on Vercel.
+
+## When editing
+
+- Match existing style; minimal diffs unless the task requires more.
+- Heavy mesh builds can take **many minutes** — don’t assume fast CSG without `printTight` or reduced `roundCount`.

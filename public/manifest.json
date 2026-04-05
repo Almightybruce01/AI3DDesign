@@ -1,0 +1,10 @@
+{
+  "name": "Matrix Workshop",
+  "short_name": "Matrix",
+  "description": "Jewelry CAD — AI3DDesign",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#e8eaef",
+  "theme_color": "#e8eaef",
+  "icons": []
+}
