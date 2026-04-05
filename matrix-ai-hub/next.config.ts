@@ -5,13 +5,20 @@ import dotenv from 'dotenv';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-/** Monorepo: load AI3DDesign/.env first so GROQ_API_KEY / OPENAI_API_KEY live at repo root. Hub .env.local still overrides. */
-dotenv.config({ path: path.join(__dirname, '..', '.env') });
+/** Local monorepo: load AI3DDesign/.env. On Vercel, env comes from Project → Environment Variables only. */
+if (process.env.VERCEL !== '1') {
+  dotenv.config({ path: path.join(__dirname, '..', '.env') });
+}
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  /** Monorepo: parent AI3DDesign has another lockfile; keeps Vercel output tracing stable when nested. */
-  outputFileTracingRoot: path.join(__dirname, '..'),
+  /**
+   * Monorepo local dev: trace includes parent lockfile. On Vercel the app root IS `matrix-ai-hub`;
+   * pointing outside the deployment breaks file tracing (ENOENT routes-manifest).
+   */
+  ...(process.env.VERCEL !== '1'
+    ? { outputFileTracingRoot: path.join(__dirname, '..') }
+    : {}),
 };
 
 export default nextConfig;
