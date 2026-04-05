@@ -3,7 +3,7 @@
 | Where | URL |
 |--------|-----|
 | **This machine (dev)** | [http://localhost:3010](http://localhost:3010) — run `cd matrix-ai-hub && npm run dev` |
-| **Production** | **Vercel → your Hub project → Domains** — usually `https://<project-name>.vercel.app` |
+| **Production (this stack)** | **https://matrix-ai-hub.vercel.app** — project `matrix-ai-hub` under team `brian-bruces-projects`; set env vars in Vercel for chat/API. |
 
 ## Public deploy without touching another Vercel project
 
